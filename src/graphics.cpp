@@ -35,7 +35,7 @@ void Graphics::init() {
         throw std::runtime_error("Failed to create renderer");
 
     texture = SDL_CreateTexture(renderer,
-                                SDL_PIXELFORMAT_RGBA8888,
+                                SDL_PIXELFORMAT_RGB888,
                                 SDL_TEXTUREACCESS_STREAMING,
                                 64,
                                 32);
@@ -47,8 +47,7 @@ void Graphics::render(std::array<byte_t, 64 * 32>& displayMem) {
     std::array<uint32_t, 64 * 32> pixels;
 
     for (int i = 0; i < displayMem.size(); i++) {
-        uint32_t color = (displayMem.at(i) == 0) ? 0x000000FF : 0xFFFFFFFF;
-        pixels.at(i) = color;
+        pixels.at(i) = (displayMem.at(i) == 0) ? 0x000000 : 0xFFFFFF;
     }
 
     const void* displayData = static_cast<const void*>(pixels.data());
@@ -56,7 +55,8 @@ void Graphics::render(std::array<byte_t, 64 * 32>& displayMem) {
 
     SDL_RenderClear(renderer);
 
-    SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+    SDL_Rect dstRect = {0, 0, 640, 320}; /* Scale the resolution */
+    SDL_RenderCopy(renderer, texture, nullptr, &dstRect);
 
     SDL_RenderPresent(renderer);
 }

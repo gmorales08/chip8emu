@@ -17,7 +17,7 @@ void Machine::init() {
     v.fill(0x00);
     pc = MEM_PRG_START_POS;
     sp = 0x0;
-    i = 0x0000;
+    I = 0x0000;
     display.fill(0x00);
     drawFlag = 0;
     keys.fill(0x00);
@@ -168,7 +168,7 @@ void Machine::cycle() {
             break;
         case 0xA:
             /* LD I, addr */
-            i = nnn;
+            I = nnn;
             pc = pc + 2;
             break;
         case 0xB:
@@ -185,13 +185,18 @@ void Machine::cycle() {
             byte_t pixel;
             v.at(0xF) = 0x0;
             for (int yline = 0; yline < n; yline++) {
-                pixel = memory.at(i + yline);
                 for (int xline = 0; xline < 8; xline++) {
-                    if ((pixel & (0x80 >> xline)) != 0) {
-                        int j = (x + xline + ((y + yline) * 64));
-                        if (display.at(j) == 1)
-                            v.at(0xF) = 1;
-                        display.at(j) ^= 1;
+                    pixel = (memory.at(I + yline) & (0x80 >> xline)) != 0;
+                    if (pixel) {
+                        int idx =
+                            (v.at(x) + xline) % 64 +
+                            ((v.at(y) + yline) % 32) * 64;
+                        if (display.at(idx)) {
+                            v.at(0xF) = 0x1;
+                            display.at(idx) = 0;
+                        } else {
+                            display.at(idx) = 1;
+                        }
                     }
                 }
             }
@@ -248,31 +253,33 @@ void Machine::cycle() {
                     break;
                 case 0x001E:
                     /* ADD I, Vx */
-                    i = i + v.at(x);
+                    I = I + v.at(x);
                     pc = pc + 2;
                     break;
                 case 0x0029:
                     /* LD F, Vx */
-                    i = 0x50 + v.at(x) * 5;
+                    I = 0x50 + v.at(x) * 5;
                     pc = pc + 2;
                     break;
                 case 0x0033:
                     /* LD B, Vx */
-                    memory.at(i) = v.at(x) / 100;
-                    memory.at(i + 1) = (v.at(x) / 10) % 10;
-                    memory.at(i + 2) = v.at(x) % 10;
+                    memory.at(I) = v.at(x) / 100;
+                    memory.at(I + 1) = (v.at(x) / 10) % 10;
+                    memory.at(I + 2) = v.at(x) % 10;
                     pc = pc + 2;
                     break;
                 case 0x0055:
                     /* Fx55 - LD [I], Vx */
-                    for (int idx = 0; idx < x; idx++)
-                        memory.at(i + idx) = v.at(idx);
+                    for (int idx = 0; idx <= x; idx++)
+                        memory.at(I + idx) = v.at(idx);
+                    I = I + x + 1; /* I is incremented in the specification */
                     pc = pc + 2;
                     break;
                 case 0x0065:
                     /* LD Vx, [I] */
-                    for (int idx = 0; idx < x; idx++)
-                        v.at(idx) = memory.at(i + idx);
+                    for (int idx = 0; idx <= x; idx++)
+                        v.at(idx) = memory.at(I + idx);
+                    I = I + x + 1; /* I is incremented in the specification */
                     pc = pc + 2;
                     break;
             }
@@ -285,10 +292,14 @@ void Machine::cycle() {
     if (delayTimer > 0)
         delayTimer--;
     if (soundTimer > 0) {
-        if (soundTimer == 1)
+        if (soundTimer == 1) {
             /* TODO: BEEP */
+            std::cout << "BEEP!!\n";
+        }
         soundTimer--;
     }
+    std::cout << "Delay Timer: " << (int) delayTimer << "\n";
+    std::cout << "Sound Timer: " << (int) soundTimer << "\n";
 }
 
 void Machine::loadGame(std::ifstream& ifs) {
@@ -312,6 +323,10 @@ void Machine::loadGame(std::ifstream& ifs) {
 
 std::array<byte_t, 64 * 32>& Machine::getDisplay() {
     return display;
+}
+
+std::array<byte_t, 16>& Machine::getKeys() {
+    return keys;
 }
 
 byte_t Machine::rnd() {

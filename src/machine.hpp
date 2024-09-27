@@ -47,6 +47,7 @@ public:
     std::array<byte_t, 64 * 32>& getDisplay();
     /* Set when the display need to be updated */
     int drawFlag;
+    std::array<byte_t, 16>& getKeys();
 private:
     word_t opcode;
     std::array<word_t, STACK_SIZE> stack;
@@ -55,7 +56,7 @@ private:
     std::array<byte_t, 16> v; /* Registers v0-vF */
     word_t pc;
     word_t sp;
-    word_t i;
+    word_t I;
 
     std::array<byte_t, 64 * 32> display; /* Graphic memory buffer */
     std::array<byte_t, 16> keys; /* Key status */
