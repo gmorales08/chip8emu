@@ -1,0 +1,11 @@
+---
+Checks: "cppcoreguidelines-*,
+         clang-analyzer-*,
+         bugprone-*,
+         readability-*,
+         misc-*
+         modernize-*,
+         performance-*
+"
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
