@@ -3,9 +3,12 @@ Checks: "cppcoreguidelines-*,
          clang-analyzer-*,
          bugprone-*,
          readability-*,
+         -readability-identifier-length,
          misc-*
          modernize-*,
-         performance-*
+         performance-*,
+         hicpp-*
 "
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
+ExtraArgs: ['-std=c++11']

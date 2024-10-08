@@ -4,12 +4,7 @@
 
 
 Emulator::Emulator() {
-    machine.init();
     graphics.init();
-}
-
-Emulator::~Emulator() {
-
 }
 
 void Emulator::readGame(const char* fileName) {

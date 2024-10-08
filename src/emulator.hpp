@@ -7,7 +7,6 @@
 class Emulator {
 public:
     Emulator();
-    ~Emulator();
     /* Reads the game from disk */
     void readGame(const char *fileName);
     Graphics& getGraphics();
