@@ -3,6 +3,7 @@ set(SRCS "main.cpp"
          "machine.cpp"
          "graphics.cpp"
          "input.cpp"
+         "sound.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SRCS})

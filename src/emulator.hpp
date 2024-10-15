@@ -1,18 +1,21 @@
 #ifndef EMULATOR_HPP
 #define EMULATOR_HPP
 
-#include "machine.hpp"
 #include "graphics.hpp"
+#include "input.hpp"
+#include "sound.hpp"
 
 class Emulator {
 public:
-    Emulator();
+    explicit Emulator(uint16_t speed);
     /* Reads the game from disk */
     void readGame(const char *fileName);
-    Graphics& getGraphics();
-    Machine& getMachine();
+    void run();
 private:
+    uint16_t speed;
     Graphics graphics;
+    Input input;
+    Sound sound;
     Machine machine;
 };
 

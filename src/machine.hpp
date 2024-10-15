@@ -26,6 +26,8 @@ public:
     bool getDrawFlag() const;
     void resetDrawFlag();
     std::array<byte_t, Machine::numOfKeys>& getKeys();
+    bool getSoundFlag() const;
+    void resetSoundFlag();
 private:
     /* Constants */
     /* Size of the machine memory (in bytes) */
@@ -127,6 +129,8 @@ private:
     bool drawFlag;
     std::array<byte_t, displaySize> display; /* Graphic memory buffer */
     std::array<byte_t, numOfKeys> keys; /* Key status */
+
+    bool soundFlag;
 
     byte_t delayTimer;
     byte_t soundTimer;

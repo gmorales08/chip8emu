@@ -23,7 +23,8 @@ const std::array<byte_t, Machine::fontsetMemSize> Machine::fontset {
 
 Machine::Machine()
     : opcode{}, stack{}, memory{}, v{} ,pc{memPrgStartPos}, sp{}, I{},
-      drawFlag{false}, display{}, keys{}, delayTimer{}, soundTimer{},
+      drawFlag{false}, display{}, keys{}, soundFlag{false}, delayTimer{},
+      soundTimer{},
       rndGen(std::random_device{}()),
       rndDistrib(rndMinNum, rndMaxNum),
       opcodeTable{&Machine::OPCODE_NULL},
@@ -47,6 +48,14 @@ void Machine::resetDrawFlag() {
     drawFlag = false;
 }
 
+bool Machine::getSoundFlag() const {
+    return soundFlag;
+}
+
+void Machine::resetSoundFlag() {
+    soundFlag = false;
+}
+
 void Machine::init() {
     opcode = 0x0000;
     stack.fill(0x0000);
@@ -58,6 +67,7 @@ void Machine::init() {
     display.fill(0x00);
     drawFlag = false;
     keys.fill(0x00);
+    soundFlag = false;
     delayTimer = 0x00;
     soundTimer = 0x00;
     /* Load the fontset in memory address 0x50 */
@@ -85,8 +95,7 @@ void Machine::cycle() {
     }
     if (soundTimer > 0) {
         if (soundTimer == 1) {
-            /* TODO: BEEP */
-            std::cout << "BEEP!!\n";
+            soundFlag = true;
         }
         soundTimer--;
     }
