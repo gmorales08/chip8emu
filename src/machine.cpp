@@ -94,10 +94,10 @@ void Machine::cycle() {
         delayTimer--;
     }
     if (soundTimer > 0) {
-        if (soundTimer == 1) {
-            soundFlag = true;
-        }
+        soundFlag = true;
         soundTimer--;
+    } else {
+        soundFlag = false;
     }
     /*std::cout << "Delay Timer: " << delayTimer << "\n";*/
     /*std::cout << "Sound Timer: " << soundTimer << "\n";*/
@@ -346,31 +346,44 @@ void Machine::ADD_Vx_Vy() {
 
 void Machine::SUB() {
     /* SUB Vx, Vy */
-    v.at(VF_idx) = v.at(get_x(opcode)) > v.at(get_y(opcode)) ? 1 : 0;
+    bool borrow = v.at(get_x(opcode)) < v.at(get_y(opcode));
     v.at(get_x(opcode)) = v.at(get_x(opcode)) - v.at(get_y(opcode));
+    if (borrow) {
+        v.at(VF_idx) = 0;
+    } else {
+        v.at(VF_idx) = 1;
+    }
     pc = pc + 2;
 }
 
 void Machine::SHR() {
     /* SHR Vx {, Vy} */
-    static constexpr auto lowBitMask = 0x00000001U;
-    v.at(VF_idx) = v.at(get_x(opcode)) & lowBitMask;
+    static constexpr auto lowBitMask = 0x01U;
+    auto lowBitOfVx = v.at(get_x(opcode)) & lowBitMask;
     v.at(get_x(opcode)) = v.at(get_x(opcode)) >>= 1U;
+    v.at(VF_idx) = lowBitOfVx;
     pc = pc + 2;
 }
 
 void Machine::SUBN() {
     /* SUBN Vx, Vy */
-    v.at(VF_idx) = v.at(get_y(opcode)) > v.at(get_x(opcode)) ? 1 : 0;
+    bool borrow = v.at(get_y(opcode)) < v.at(get_x(opcode));
     v.at(get_x(opcode)) = v.at(get_y(opcode)) - v.at(get_x(opcode));
+    if (borrow) {
+        v.at(VF_idx) = 0;
+    } else {
+        v.at(VF_idx) = 1;
+    }
     pc = pc + 2;
 }
 
 void Machine::SHL() {
     /* SHL Vx {, Vy} */
-    static constexpr auto highBitMask = 0x10000000U;
-    v.at(VF_idx) = v.at(get_x(opcode)) & highBitMask;
+    static constexpr auto highBitMask = 0x80U;
+    static constexpr auto highBitShift = 7U;
+    auto highBitOfVx = (v.at(get_x(opcode)) & highBitMask) >> highBitShift;
     v.at(get_x(opcode)) = v.at(get_x(opcode)) <<= 1U;
+    v.at(VF_idx) = highBitOfVx;
     pc = pc + 2;
 }
 

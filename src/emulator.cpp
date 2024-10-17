@@ -21,7 +21,7 @@ void Emulator::run() {
     const Uint32 frameDelay = 1000 / speed;
     Uint32 frameStart {};
     Uint32 frameTime {};
-    
+
     int cycles = 0;
     while (!input.shouldQuit()) {
         frameStart = SDL_GetTicks();
