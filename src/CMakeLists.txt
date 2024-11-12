@@ -1,9 +1,12 @@
-set(SRCS "main.cpp"
+set(SRCS "sdl/graphics.cpp"
+         "sdl/keyboardController.cpp"
+         "sdl/sound.cpp"
+         "bus.cpp"
+         "cpu.cpp"
          "emulator.cpp"
          "machine.cpp"
-         "graphics.cpp"
-         "input.cpp"
-         "sound.cpp"
+         "main.cpp"
+         "memory.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${SRCS})

@@ -1,22 +1,23 @@
 #ifndef EMULATOR_HPP
 #define EMULATOR_HPP
 
-#include "graphics.hpp"
-#include "input.hpp"
-#include "sound.hpp"
+#include "machine.hpp"
+#include "sdl/graphics.hpp"
+#include "sdl/keyboardController.hpp"
+#include "sdl/sound.hpp"
 
 class Emulator {
-public:
-    explicit Emulator(uint16_t speed);
-    /* Reads the game from disk */
-    void readGame(const char *fileName);
-    void run();
-private:
-    uint16_t speed;
-    Graphics graphics;
-    Input input;
-    Sound sound;
-    Machine machine;
+ public:
+  explicit Emulator(uint32_t speed);
+  /* Reads the game from disk */
+  void readGame(const char *fileName);
+  void run();
+
+ private:
+  double speed;
+  Machine machine;
+  Graphics graphics;
+  Sound sound;
 };
 
 #endif /* EMULATOR_HPP */

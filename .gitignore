@@ -30,8 +30,3 @@
 *.exe
 *.out
 *.app
-
-chip8emu
-roms/
-core
-bin/
